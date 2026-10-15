@@ -3,10 +3,10 @@
  * Everything here is visual: buttons, tabs, dropdowns and inputs are inert
  * on purpose — only the Sprint 1 account features actually work.
  */
-import { Bot, ChevronDown, Heart, Paperclip, Share2, MoreHorizontal, Plus, Pencil, Trash2 } from 'lucide-react'
+import { Bot, ChevronDown, Heart, Share2, MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
 import poster from '../assets/ecoways-poster.jpg'
 import { initials } from '../lib/format'
-import { DisplayButton, DisplaySearch } from './DashboardControls'
+import { DisplayButton } from './DashboardControls'
 
 const INERT = { type: 'button', title: 'Not available yet' }
 
@@ -137,71 +137,5 @@ export function OpportunityPost({ action, office = false, audience = 'Everyone',
       </div>
       {children}
     </article>
-  )
-}
-
-const THREADS = [
-  { from: 'SET Representative', preview: 'We would like to request clean-up drive assistance...', isNew: true },
-  { from: 'Student Org - IT Dept', preview: 'Follow up on volunteer hours approval...' },
-]
-
-/** Inbox + conversation — Frames 12 and 17. */
-export function MessagesPanel({ showNewBadge }) {
-  return (
-    <div className="grid gap-5 lg:grid-cols-[minmax(0,20rem)_1fr]">
-      <div className="flex min-h-[28rem] flex-col border border-gray-800 shadow-md">
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-gold px-4 py-3">
-          <h2 className="text-3xl font-bold">Inbox</h2>
-          <DisplayButton icon={Plus} className="bg-white">New message</DisplayButton>
-        </div>
-        <div className="p-3"><DisplaySearch placeholder="Search conversations" /></div>
-        {THREADS.map((t) => (
-          <div key={t.from} className="flex gap-3 border-b border-gray-800 px-3 py-3">
-            <BotAvatar size="size-8" />
-            <div className="min-w-0 flex-1 text-lg leading-snug">
-              <p className="flex items-center justify-between gap-2 font-bold">
-                {t.from}
-                {showNewBadge && t.isNew && <span className="rounded-full bg-red-600 px-2 text-[10px] font-normal text-white">New</span>}
-              </p>
-              <p>{t.preview}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="flex min-h-[28rem] flex-col border border-gray-800 shadow-md">
-        <div className="flex items-center gap-3 bg-gold px-4 py-3">
-          <BotAvatar size="size-8" />
-          <h2 className="text-2xl font-bold">SBA Representative</h2>
-        </div>
-        <div className="flex-1 space-y-8 p-6">
-          <div className="flex items-center gap-3">
-            <BotAvatar size="size-8" />
-            <p className="max-w-lg rounded bg-gray-200 px-4 py-3 text-sm font-medium">
-              Good day, we would like to request assistance for a clean-up drive in our area.
-            </p>
-          </div>
-          <p className="ml-auto max-w-md rounded bg-sidebar px-5 py-3 text-sm font-medium text-white">
-            Noted. Please submit the required COMEX forms.
-          </p>
-        </div>
-        <ChatInput />
-      </div>
-    </div>
-  )
-}
-
-function ChatInput() {
-  return (
-    <div className="flex items-center gap-4 p-4">
-      <input
-        placeholder="Type a message..."
-        aria-label="Message"
-        className="min-w-0 flex-1 rounded border border-gray-800 px-4 py-3 text-lg shadow-md outline-none focus-visible:ring-2 focus-visible:ring-navy/20"
-      />
-      <DisplayButton icon={Paperclip} label="Attach a file" className="!border-0 !shadow-none" />
-      <button {...INERT} className="cursor-pointer rounded border border-gray-800 bg-gray-200 px-5 py-3 text-lg font-medium focus-visible:outline-2 focus-visible:outline-navy">
-        Send
-      </button>
-    </div>
   )
 }

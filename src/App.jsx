@@ -22,13 +22,14 @@ const AdminHome = adminPage('AdminHome')
 const AdminProjects = adminPage('AdminProjects')
 const AdminVolunteerHours = adminPage('AdminVolunteerHours')
 const AdminCertificates = adminPage('AdminCertificates')
-const AdminMessages = adminPage('AdminMessages')
 const MemberHome = memberPage('MemberHome')
 const MyProjects = memberPage('MyProjects')
 const MyVolunteerHours = memberPage('MyVolunteerHours')
 const MyCertificates = memberPage('MyCertificates')
 const Endorsements = memberPage('Endorsements')
-const MemberMessages = memberPage('MemberMessages')
+const messagePage = (name) => lazy(() => import('./pages/dashboards/MessagePages').then((m) => ({ default: m[name] })))
+const AdminMessages = messagePage('AdminMessages')
+const MemberMessages = messagePage('MemberMessages')
 
 /* Browser-tab titles for the account screens. Dashboard pages take theirs
  * from the sidebar label (see AppLayout). */

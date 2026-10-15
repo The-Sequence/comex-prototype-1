@@ -1,6 +1,7 @@
 /* COMEX Head display pages — Figma Frames 9, 10, 11, 11.12 and 12.
  * Display only: nothing on these pages can be changed. */
 import { useCallback, useState } from 'react'
+import { useOutletContext } from 'react-router-dom'
 import { Calendar, Clock, Filter, Send, CircleCheck, Eye, PenLine } from 'lucide-react'
 import { AttentionPanel, DisplayButton, DisplayFilter, DisplaySearch } from '../../components/DashboardControls'
 import {
@@ -8,7 +9,6 @@ import {
   DepartmentPanel,
   ECOWAYS,
   FakeSelect,
-  MessagesPanel,
   NavyButton,
   OpportunityPost,
   PageTitle,
@@ -17,12 +17,15 @@ import {
   YellowButton,
 } from '../../components/Showcase'
 import { useApplications, usePendingApplicationCount } from '../../lib/applications'
+import { useUnreadThreadCount } from '../../lib/messages'
 import { ApplicantsDialog, Toast } from '../../components/Applications'
 
 /** Frame 9 — Admin Home. */
 export function AdminHome() {
   const applicants = useApplications(ECOWAYS.id)
   const pendingCount = usePendingApplicationCount()
+  const { user } = useOutletContext()
+  const unread = useUnreadThreadCount(user)
   const [showApplicants, setShowApplicants] = useState(false)
   const [toast, setToast] = useState(null)
   const showToast = useCallback((message, tone = 'success') => setToast({ message, tone }), [])
@@ -43,6 +46,7 @@ export function AdminHome() {
           onAction: () => setShowApplicants(true),
         }] : []),
         { title: '4 registrations waiting for approval', detail: 'Review the requested role and department.', action: 'Review', to: 'approvals' },
+        ...(unread > 0 ? [{ title: `${unread} unread ${unread === 1 ? 'conversation' : 'conversations'}`, detail: 'Departments and volunteers are waiting for a reply.', action: 'Read', to: 'messages' }] : []),
         { title: 'Community Engagement forms submitted', detail: 'A representative submitted the required forms.', action: 'View', to: 'projects' },
       ]} />
       {showApplicants && (
@@ -231,16 +235,6 @@ export function AdminCertificates() {
         </DepartmentPanel>
         <DepartmentPanel title="School of Business Administration (SBA)" />
       </div>
-    </>
-  )
-}
-
-/** Frame 12 — Messages. */
-export function AdminMessages() {
-  return (
-    <>
-      <PageTitle>Messages</PageTitle>
-      <MessagesPanel showNewBadge />
     </>
   )
 }

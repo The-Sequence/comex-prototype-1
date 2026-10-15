@@ -9,19 +9,20 @@ import {
   DepartmentPanel,
   ECOWAYS,
   FakeSelect,
-  MessagesPanel,
   OpportunityPost,
   PageTitle,
   Tabs,
   YellowButton,
 } from '../../components/Showcase'
 import { useApplications } from '../../lib/applications'
+import { useUnreadThreadCount } from '../../lib/messages'
 import { ApplicationForm, Toast } from '../../components/Applications'
 
 /** Frame 14 — Volunteer Opportunities feed. */
 export function MemberHome() {
   const { user } = useOutletContext()
   const applied = useApplications(ECOWAYS.id).find(a => a.userId === user.id)
+  const unread = useUnreadThreadCount(user)
   const [applying, setApplying] = useState(false)
   const [toast, setToast] = useState('')
   return (
@@ -35,7 +36,7 @@ export function MemberHome() {
       } />
       <AttentionPanel items={[
         { title: '30 volunteer hours still needed', detail: 'Apply to an activity to complete your requirement.', action: 'Track', to: 'volunteer-hours' },
-        { title: '2 unread messages', detail: 'You have a reply from the COMEX Office.', action: 'Read', to: 'messages' },
+        ...(unread > 0 ? [{ title: `${unread} unread ${unread === 1 ? 'conversation' : 'conversations'}`, detail: 'You have new messages waiting in your inbox.', action: 'Read', to: 'messages' }] : []),
       ]} />
       {applying && (
         <ApplicationForm
@@ -226,16 +227,6 @@ export function MyCertificates() {
           </tbody>
         </table>
       </div>
-    </>
-  )
-}
-
-/** Frame 17 — Messages. */
-export function MemberMessages() {
-  return (
-    <>
-      <PageTitle>Messages</PageTitle>
-      <MessagesPanel />
     </>
   )
 }
