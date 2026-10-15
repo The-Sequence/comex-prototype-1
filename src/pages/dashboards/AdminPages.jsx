@@ -1,18 +1,15 @@
 /* COMEX Head display pages — Figma Frames 9, 10, 11, 11.12 and 12.
  * Display only: nothing on these pages can be changed. */
 import { useCallback, useState } from 'react'
-import { Clock, Send, CircleCheck, Eye, PenLine } from 'lucide-react'
+import { Calendar, CircleCheck, Clock, Eye, Filter, PenLine, Send } from 'lucide-react'
 import { AttentionPanel, DisplayButton, DisplayFilter, DisplaySearch } from '../../components/DashboardControls'
 import {
-  Avatar,
   DepartmentPanel,
   ECOWAYS,
   FakeSelect,
   MessagesPanel,
-  NavyButton,
   OpportunityPost,
   PageTitle,
-  StatusPill,
   Tabs,
   YellowButton,
 } from '../../components/Showcase'
@@ -76,87 +73,6 @@ export function AdminProjects() {
               </p>
             </div>
             <YellowButton className="!px-2 !py-1 text-[11px]">View Status</YellowButton>
-          </div>
-        </DepartmentPanel>
-        <DepartmentPanel title="School of Business Administration (SBA)" />
-      </div>
-    </>
-  )
-}
-
-const CERT_ROWS = [
-  { name: 'Juan Dela Cruz', hours: 48, done: true },
-  { name: 'Maria Santos', hours: 32, done: true },
-  { name: 'Jose Mendoza', hours: 16, done: false },
-]
-
-/** Frame 11.12 — Volunteer Certificates. */
-export function AdminCertificates() {
-  return (
-    <>
-      <PageTitle action={<FakeSelect className="w-48 font-medium">A.Y. 2025-2026</FakeSelect>}>Volunteer Certificates</PageTitle>
-      <div className="mb-6 flex flex-wrap gap-3">
-        <DisplaySearch placeholder="Search volunteer name" className="min-w-56 flex-1" />
-        <DisplayFilter>All departments</DisplayFilter><DisplayFilter>All statuses</DisplayFilter>
-        <DisplayButton icon={PenLine}>Manage signature</DisplayButton>
-      </div>
-      <div className="-mt-3 mb-6 flex gap-4 text-sm">
-        <span className="rounded-full border border-gray-800 px-3 py-1 text-green-800">16 Done</span>
-        <span className="rounded-full border border-gray-800 px-3 py-1 text-amber-500">5 In Progress</span>
-        <span className="rounded-full border border-gray-800 px-3 py-1 text-navy">0 Sent</span>
-      </div>
-      <div className="space-y-6">
-        <DepartmentPanel title="School of Engineering and Technology (SET)" open>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-left">
-              <thead className="bg-gray-50 text-sm uppercase tracking-wide text-gray-600">
-                <tr>
-                  <th className="px-6 py-3 font-medium">Name</th>
-                  <th className="py-3 text-center font-medium">Total Hours</th>
-                  <th className="py-3 text-center font-medium">Status</th>
-                  <th className="py-3 text-center font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {CERT_ROWS.map((row) => (
-                  <tr key={row.name}>
-                    <td className="px-6 py-4">
-                      <span className="flex items-center gap-3 text-lg font-medium">
-                        <Avatar name={row.name} size="size-10" /> {row.name}
-                      </span>
-                    </td>
-                    <td className="text-center">
-                      <span className={`rounded-md px-3 py-1 text-lg font-bold ${row.done ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-600'}`}>
-                        {row.hours} hrs
-                      </span>
-                    </td>
-                    <td className="text-center">
-                      {row.done ? (
-                        <StatusPill tone="green">
-                          <CircleCheck className="size-4" /> Done
-                        </StatusPill>
-                      ) : (
-                        <StatusPill tone="orange">
-                          <Clock className="size-4" /> 4 hrs left
-                        </StatusPill>
-                      )}
-                    </td>
-                    <td className="text-center">
-                      {row.done ? (
-                        <span className="inline-flex gap-2">
-                          <DisplayButton icon={Eye} className="bg-white">Preview</DisplayButton>
-                          <NavyButton className="inline-flex w-24 items-center justify-center gap-1 !bg-amber-500 !text-black">
-                            <Send className="size-3.5" /> Send
-                          </NavyButton>
-                        </span>
-                      ) : (
-                        <span className="text-sm italic text-gray-400">Not yet eligible</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
         </DepartmentPanel>
         <DepartmentPanel title="School of Business Administration (SBA)" />
