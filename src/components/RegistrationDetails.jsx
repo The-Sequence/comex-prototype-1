@@ -14,6 +14,7 @@ export default function RegistrationDetails({ user, onApprove, onReject, onClose
     ['Name:', user.fullName],
     ['Department:', department],
     ['Email Address:', user.email],
+    ...(user.unit ? [['Staff type:', user.staffType], ['Office/unit:', user.unit]] : []),
   ]
 
   return (

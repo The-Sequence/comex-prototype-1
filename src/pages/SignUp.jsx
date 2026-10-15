@@ -7,6 +7,8 @@ import { DEPARTMENTS, departmentLabel } from '../config/departments'
 import * as db from '../lib/db'
 import { CODE_TTL_MINUTES, SIGNUP_ROLES } from '../lib/db'
 import { PRIVACY_NOTICE_VERSION } from '../lib/privacy'
+import { OTHER_UNIT, STAFF_TYPES, STAFF_UNITS } from '../config/staff'
+import { unitValue, validateStaff } from '../lib/staff'
 import { codeScreenUrl } from '../lib/urlParams'
 import BackendNotice from '../components/BackendNotice'
 import { errorText } from '../lib/decisions'
@@ -18,7 +20,12 @@ import {
   validatePassword,
 } from '../lib/validation'
 
-const EMPTY = { fullName: '', department: '', email: '', password: '', confirm: '', role: '' }
+const EMPTY = { fullName: '', department: '', email: '', password: '', confirm: '', role: '', staffType: '', unit: '', otherUnit: '' }
+
+const selectClass = (error, value) =>
+  `w-full rounded-sm border bg-white px-2 py-2 text-sm outline-none focus:ring-2 ${
+    error ? 'border-red-500 focus:ring-red-200' : 'border-gray-400 focus:ring-navy/20'
+  } ${value ? '' : 'text-gray-400'}`
 
 function validate(form) {
   return {
@@ -28,6 +35,7 @@ function validate(form) {
     password: validatePassword(form.password),
     confirm: validateConfirm(form.password, form.confirm),
     role: form.role ? '' : 'Select your role.',
+    ...(form.role === 'Others' ? validateStaff(form) : {}),
   }
 }
 
@@ -62,7 +70,8 @@ export default function SignUp() {
         department: form.department,
         email: form.email,
         password: form.password,
-        role: form.role,
+        role: form.role === 'Others' ? 'ASP' : form.role,
+        ...(form.role === 'Others' ? { staffType: form.staffType, unit: unitValue(form) } : {}),
       })
       navigate(codeScreenUrl('/verify-email', sent.email), {
         state: { email: sent.email, expiresAt: sent.expiresAt ?? Date.now() + CODE_TTL_MINUTES * 60 * 1000 },
@@ -74,14 +83,14 @@ export default function SignUp() {
     }
   }
 
-  const roleOptions = SIGNUP_ROLES
+  const roleOptions = [...SIGNUP_ROLES.filter((r) => r !== 'ASP'), 'Others']
 
   return (
     <AuthCard title="CREATE ACCOUNT" wide>
       <form onSubmit={handleSubmit} noValidate className="space-y-3.5">
         <BackendNotice />
         <Alert>{formError}</Alert>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1.4fr_1fr]">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <TextField
             id="fullName"
             label="Full Name"
@@ -180,6 +189,41 @@ export default function SignUp() {
               </label>
             ))}
           </div>
+          {form.role === 'Others' && (
+            <div className="mt-3 space-y-3 rounded-sm border border-gray-300 bg-canvas p-3">
+              <div>
+                <Label htmlFor="staffType" required>
+                  Staff type
+                </Label>
+                <select id="staffType" value={form.staffType} onChange={update('staffType')} aria-invalid={!!errors.staffType} className={selectClass(errors.staffType, form.staffType)}>
+                  <option value="">Choose your staff type</option>
+                  {STAFF_TYPES.map((t) => (
+                    <option key={t.value} value={t.value} className="text-gray-900">
+                      {t.label}
+                    </option>
+                  ))}
+                </select>
+                <FieldError>{errors.staffType}</FieldError>
+              </div>
+              <div>
+                <Label htmlFor="unit" required>
+                  Where do you work?
+                </Label>
+                <select id="unit" value={form.unit} onChange={update('unit')} aria-invalid={!!errors.unit} className={selectClass(errors.unit, form.unit)}>
+                  <option value="">Choose your office or unit</option>
+                  {[...STAFF_UNITS, OTHER_UNIT].map((u) => (
+                    <option key={u} value={u} className="text-gray-900">
+                      {u}
+                    </option>
+                  ))}
+                </select>
+                <FieldError>{errors.unit}</FieldError>
+              </div>
+              {form.unit === OTHER_UNIT && (
+                <TextField id="otherUnit" label="Specify your office or unit" required value={form.otherUnit} onChange={update('otherUnit')} error={errors.otherUnit} />
+              )}
+            </div>
+          )}
           <FieldError>{errors.role}</FieldError>
         </fieldset>
 

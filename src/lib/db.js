@@ -28,7 +28,7 @@ export function profileFromRow(row) {
   return { id: row.id, fullName: row.full_name, email: row.email, department: row.department,
     role: row.role, status: row.status, emailVerified: Boolean(row.email_verified_at),
     createdAt: row.created_at, registeredAt: row.created_at,
-    approvedAt: row.status === 'approved' ? row.decided_at : null,
+    approvedAt: row.status === 'approved' ? row.decided_at : null, staffType: row.staff_type, unit: row.unit,
     decisionReason: row.decision_reason, decidedAt: row.decided_at }
 }
 async function ownProfile(id) {
@@ -36,11 +36,11 @@ async function ownProfile(id) {
   if (error) throw new Error('Unable to load your account details. Please try again.')
   return profileFromRow(data)
 }
-export async function signUp({ fullName, department, email, password, role, privacyNoticeVersion }) {
+export async function signUp({ fullName, department, email, password, role, privacyNoticeVersion, staffType, unit }) {
   if (!SIGNUP_ROLES.includes(role)) throw new Error('Select a valid registration role.')
   if (!DEPARTMENTS.some(item => item.code === department)) throw new Error('Select a valid department.')
   const { error } = await requireBackend().auth.signUp({ email: normalizeEmail(email), password,
-    options: { data: { full_name: fullName.trim(), department, role, privacy_notice_version: privacyNoticeVersion } } })
+    options: { data: { full_name: fullName.trim(), department, role, privacy_notice_version: privacyNoticeVersion, ...(staffType ? { staff_type: staffType, unit } : {}) } } })
   if (error) throw new Error(error.message)
   return { email: normalizeEmail(email), expiresAt: expiry() }
 }
