@@ -13,6 +13,7 @@ import { createOpportunity, deleteOpportunity, updateOpportunity, useOpportuniti
 import { AUDIENCES, CAPTION_MAX, opportunityErrors } from '../../lib/opportunityRules'
 import { isAwaitingApproval, useRegistrations } from '../../lib/useUsers'
 import { useUnreadThreadCount } from '../../lib/messages'
+import { useStepsAwaitingValidation } from '../../lib/projects'
 import { useHoursStillNeeded } from '../../lib/volunteerHours'
 
 const SEARCH_PLACEHOLDER = 'Search volunteer opportunity titles and captions'
@@ -130,6 +131,7 @@ export function AdminHome() {
   const applications = useAllApplications()
   const registrations = useRegistrations('pending')
   const unread = useUnreadThreadCount(user)
+  const awaitingSteps = useStepsAwaitingValidation(user)
   const [dialog, setDialog] = useState(null)
   const [toast, setToast] = useState(null)
   const showToast = useCallback((message, tone = 'success') => setToast({ message, tone }), [])
@@ -170,7 +172,7 @@ export function AdminHome() {
           to: 'approvals',
         }] : []),
         ...(unread > 0 ? [{ title: `${plural(unread, 'unread conversation')}`, detail: 'Departments and volunteers are waiting for a reply.', action: 'Read', to: 'messages' }] : []),
-        { title: 'Community Engagement forms submitted', detail: 'A representative submitted the required forms.', action: 'View', to: 'projects' },
+        ...(awaitingSteps.length > 0 ? [{ title: `${plural(awaitingSteps.length, 'project step')} awaiting validation`, detail: 'A representative submitted the required forms.', action: 'View', to: 'projects' }] : []),
       ]} />
       {dialog?.type === 'compose' && <OpportunityComposer opportunity={dialog.opportunity} user={user} onClose={close} onSaved={done} />}
       {dialog?.type === 'delete' && <DeleteOpportunity opportunity={dialog.opportunity} onClose={close} onDeleted={() => done('The post was deleted.')} />}
