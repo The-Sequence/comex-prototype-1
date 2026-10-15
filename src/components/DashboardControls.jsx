@@ -3,12 +3,13 @@ import { useNavigate, useOutletContext } from 'react-router-dom'
 import { ChevronDown, Search } from 'lucide-react'
 
 /** Visible controls for later sprints. They deliberately have no handlers. */
-export function DisplayButton({ children, icon: Icon, label, className = '' }) {
+export function DisplayButton({ children, icon: Icon, label, className = '', onClick }) {
   return (
     <button
       type="button"
       aria-label={label}
-      title="Not available yet"
+      onClick={onClick}
+      title={onClick ? label : 'Not available yet'}
       className={`inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded border border-gray-800 px-3 py-2 text-sm font-medium shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy ${className}`}
     >
       {Icon && <Icon className="size-4 shrink-0" aria-hidden="true" />}
@@ -17,11 +18,11 @@ export function DisplayButton({ children, icon: Icon, label, className = '' }) {
   )
 }
 
-export function DisplaySearch({ placeholder = 'Search', className = '' }) {
+export function DisplaySearch({ placeholder = 'Search', className = '', value, onChange }) {
   return (
     <div className={`flex min-w-0 items-center gap-2 rounded border border-gray-800 bg-white px-3 py-2.5 shadow-sm ${className}`}>
       <button type="button" aria-label={placeholder} className="cursor-pointer text-gray-600 focus-visible:outline-2 focus-visible:outline-navy"><Search className="size-4 shrink-0" aria-hidden="true" /></button>
-      <input aria-label={placeholder} placeholder={placeholder} className="min-w-0 w-full bg-transparent text-sm outline-none focus-visible:ring-2 focus-visible:ring-navy/20" />
+      <input type="search" aria-label={placeholder} placeholder={placeholder} value={value} onChange={onChange && ((e) => onChange(e.target.value))} className="min-w-0 w-full bg-transparent text-sm outline-none focus-visible:ring-2 focus-visible:ring-navy/20" />
     </div>
   )
 }

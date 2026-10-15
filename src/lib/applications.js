@@ -49,7 +49,7 @@ export function setApplicantStatus(opportunityId, userId, status) {
   return { success: true, data: updated }
 }
 
-function useAllApplications() {
+export function useAllApplications() {
   const [all, setAll] = useState(read)
   useEffect(() => {
     const sync = () => setAll(read())

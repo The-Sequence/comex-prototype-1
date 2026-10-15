@@ -1,57 +1,18 @@
 /* COMEX Head display pages — Figma Frames 9, 10, 11, 11.12 and 12.
  * Display only: nothing on these pages can be changed. */
-import { useCallback, useState } from 'react'
 import { Calendar, Clock, Filter, Send, CircleCheck, Eye, PenLine } from 'lucide-react'
-import { AttentionPanel, DisplayButton, DisplayFilter, DisplaySearch } from '../../components/DashboardControls'
+import { DisplayButton, DisplayFilter, DisplaySearch } from '../../components/DashboardControls'
 import {
   Avatar,
   DepartmentPanel,
-  ECOWAYS,
   FakeSelect,
   MessagesPanel,
   NavyButton,
-  OpportunityPost,
   PageTitle,
   StatusPill,
   Tabs,
   YellowButton,
 } from '../../components/Showcase'
-import { useApplications, usePendingApplicationCount } from '../../lib/applications'
-import { ApplicantsDialog, Toast } from '../../components/Applications'
-
-/** Frame 9 — Admin Home. */
-export function AdminHome() {
-  const applicants = useApplications(ECOWAYS.id)
-  const pendingCount = usePendingApplicationCount()
-  const [showApplicants, setShowApplicants] = useState(false)
-  const [toast, setToast] = useState(null)
-  const showToast = useCallback((message, tone = 'success') => setToast({ message, tone }), [])
-  return (
-    <>
-      <PageTitle action={<YellowButton>+ New opportunity</YellowButton>}>Volunteer Opportunities</PageTitle>
-      <DisplaySearch placeholder="Search volunteer opportunity titles and captions" className="mb-6 max-w-4xl" />
-      <OpportunityPost office action={
-        <YellowButton className="min-w-56 text-lg" onClick={() => setShowApplicants(true)}>
-          List of applicants ({applicants.length})
-        </YellowButton>
-      } />
-      <AttentionPanel items={[
-        ...(pendingCount > 0 ? [{
-          title: `${pendingCount} volunteer ${pendingCount === 1 ? 'application' : 'applications'} awaiting a decision`,
-          detail: 'Accept or decline so volunteers know where they stand.',
-          action: 'Review',
-          onAction: () => setShowApplicants(true),
-        }] : []),
-        { title: '4 registrations waiting for approval', detail: 'Review the requested role and department.', action: 'Review', to: 'approvals' },
-        { title: 'Community Engagement forms submitted', detail: 'A representative submitted the required forms.', action: 'View', to: 'projects' },
-      ]} />
-      {showApplicants && (
-        <ApplicantsDialog opportunity={ECOWAYS} applicants={applicants} onClose={() => setShowApplicants(false)} onToast={showToast} />
-      )}
-      <Toast message={toast?.message} tone={toast?.tone} onDismiss={() => setToast(null)} />
-    </>
-  )
-}
 
 /** Frame 10 — Project Proposals. */
 export function AdminProjects() {
