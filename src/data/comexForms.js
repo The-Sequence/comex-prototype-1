@@ -1,7 +1,7 @@
 /* COMEX form catalogue, reused from comex-frontend-v2 (src/config/comexForms.js).
- * Display data only: titles, descriptions, the step each form is needed at,
- * and which languages exist. There are no files — nothing downloads in the
- * dashboards. Groups are ordered by when a Project Lead meets them. */
+ * Titles, descriptions, the step each form is needed at, and which languages
+ * exist; the PDFs are in public/forms (see src/lib/formCatalog.js). Groups are
+ * ordered by when a Project Lead meets them. */
 
 const LANGUAGE_LABELS = { en: 'English', fil: 'Filipino' }
 
