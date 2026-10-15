@@ -30,7 +30,7 @@ const selectClass = (error, value) =>
 function validate(form) {
   return {
     fullName: validateFullName(form.fullName),
-    department: form.department ? '' : 'Select your department.',
+    department: form.department ? '' : 'Select your department or office.',
     email: validateEmail(form.email),
     password: validatePassword(form.password),
     confirm: validateConfirm(form.password, form.confirm),
@@ -103,7 +103,7 @@ export default function SignUp() {
           />
           <div>
             <Label htmlFor="department" required>
-              Department
+              Department/Office
             </Label>
             <select
               id="department"
@@ -114,7 +114,7 @@ export default function SignUp() {
                 errors.department ? 'border-red-500 focus:ring-red-200' : 'border-gray-400 focus:ring-navy/20'
               } ${form.department ? '' : 'text-gray-400'}`}
             >
-              <option value="">Choose your department</option>
+              <option value="">Choose your department/office</option>
               {DEPARTMENTS.map((d) => (
                 <option key={d.code} value={d.code} className="text-gray-900">
                   {departmentLabel(d)}
