@@ -3,10 +3,11 @@
  * Everything here is visual: buttons, tabs, dropdowns and inputs are inert
  * on purpose — only the Sprint 1 account features actually work.
  */
-import { Bot, ChevronDown, Heart, Share2, MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
+import { Bot, ChevronDown, Heart, MoreHorizontal, Paperclip, Pencil, Plus, Share2, Trash2 } from 'lucide-react'
 import poster from '../assets/ecoways-poster.jpg'
 import { initials } from '../lib/format'
-import { DisplayButton } from './DashboardControls'
+import { SEED_OPPORTUNITY, postedDate } from '../lib/opportunityRules'
+import { DisplayButton, DisplaySearch } from './DashboardControls'
 
 const INERT = { type: 'button', title: 'Not available yet' }
 
@@ -103,36 +104,37 @@ export function StatusPill({ tone, children }) {
   return <span className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-sm font-semibold ${tones[tone]}`}>{children}</span>
 }
 
-export const ECOWAYS_ID = 'ecoways-clean-green'
-export const ECOWAYS = { id: ECOWAYS_ID, title: 'Join EcoWays: Clean and Green Initiative' }
+export const ECOWAYS_ID = SEED_OPPORTUNITY.id
+export const ECOWAYS = { id: ECOWAYS_ID, title: SEED_OPPORTUNITY.title }
+const IMAGES = { 'ecoways-poster': { src: poster, alt: 'Nationalian EcoWays flexible plastic waste collection poster' } }
 
-/** Volunteer opportunity post — Frames 9 and 14. */
-export function OpportunityPost({ action, office = false, audience = 'Everyone', children }) {
+/** Volunteer opportunity post — Frames 9 and 14. `onEdit` / `onDelete` show the office's post controls. */
+export function OpportunityPost({ opportunity = SEED_OPPORTUNITY, action, onEdit, onDelete, children }) {
+  const image = IMAGES[opportunity.imageUrl]
   return (
     <article className="max-w-4xl">
       <div className="flex flex-wrap items-center gap-3">
-        <Avatar name="System Administrator" size="size-14" />
+        <Avatar name={opportunity.postedBy} size="size-14" />
         <div className="leading-snug">
-          <p className="text-lg font-medium">System Administrator</p>
-          <p className="text-sm text-gray-600">Admin/COMEX head</p>
-          <p className="text-sm">May 1, 2026 / {audience}</p>
+          <p className="text-lg font-medium">{opportunity.postedBy}</p>
+          <p className="text-sm text-gray-600">{opportunity.postedByRole}</p>
+          <p className="text-sm">{postedDate(opportunity.postedAt)} / {opportunity.audience}</p>
         </div>
-        {office && <div className="ml-auto flex flex-wrap gap-2">
-          <DisplayButton icon={MoreHorizontal} label="Post options" />
-          <DisplayButton icon={Pencil}>Edit</DisplayButton>
-          <DisplayButton icon={Trash2} className="text-red-600">Delete</DisplayButton>
+        {(onEdit || onDelete) && <div className="ml-auto flex flex-wrap gap-2">
+          {onEdit && <DisplayButton icon={Pencil} label={`Edit ${opportunity.title}`} onClick={onEdit}>Edit</DisplayButton>}
+          {onDelete && <DisplayButton icon={Trash2} label={`Delete ${opportunity.title}`} className="text-red-600" onClick={onDelete}>Delete</DisplayButton>}
         </div>}
       </div>
-      <h2 className="mt-5 text-2xl font-bold md:text-3xl">{ECOWAYS.title}</h2>
-      <p className="mt-1 text-lg">Be part of EcoWays’ clean-up drive and help create a cleaner, greener community.</p>
-      <img src={poster} alt="Nationalian EcoWays flexible plastic waste collection poster" className="mt-3 w-full max-w-3xl" />
+      <h2 className="mt-5 text-2xl font-bold md:text-3xl">{opportunity.title}</h2>
+      {opportunity.caption && <p className="mt-1 whitespace-pre-line text-lg">{opportunity.caption}</p>}
+      {image && <img src={image.src} alt={image.alt} className="mt-3 w-full max-w-3xl" />}
       <div className="mt-4 flex flex-wrap items-center gap-6">
         {action}
         <DisplayButton label="Like opportunity" className="!flex-col !gap-0 !border-0 !shadow-none">
-          <Heart className="size-7" /> 21
+          <Heart className="size-7" /> {opportunity.likes ?? 0}
         </DisplayButton>
         <DisplayButton label="Share opportunity" className="!flex-col !gap-0 !border-0 !shadow-none">
-          <Share2 className="size-6" /> 3
+          <Share2 className="size-6" /> {opportunity.shares ?? 0}
         </DisplayButton>
       </div>
       {children}

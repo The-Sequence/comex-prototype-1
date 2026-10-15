@@ -39,7 +39,7 @@ export function Modal({ title, subtitle, size = 'max-w-lg', onClose, footer, chi
   )
 }
 
-function SelectField({ id, label, required, error, options, placeholder, helper, ...props }) {
+export function SelectField({ id, label, required, error, options, placeholder, helper, ...props }) {
   return (
     <div>
       <Label htmlFor={id} required={required}>{label}</Label>

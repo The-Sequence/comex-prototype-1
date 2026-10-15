@@ -23,7 +23,7 @@ export function DisplaySearch({ placeholder = 'Search', className = '', value, o
   return (
     <div className={`flex min-w-0 items-center gap-2 rounded border border-gray-800 bg-white px-3 py-2.5 shadow-sm ${className}`}>
       <button type="button" aria-label={placeholder} className="cursor-pointer text-gray-600 focus-visible:outline-2 focus-visible:outline-navy"><Search className="size-4 shrink-0" aria-hidden="true" /></button>
-      <input aria-label={placeholder} placeholder={placeholder} value={value} onChange={onChange && ((e) => onChange(e.target.value))} className="min-w-0 w-full bg-transparent text-sm outline-none focus-visible:ring-2 focus-visible:ring-navy/20" />
+      <input type="search" aria-label={placeholder} placeholder={placeholder} value={value} onChange={onChange && ((e) => onChange(e.target.value))} className="min-w-0 w-full bg-transparent text-sm outline-none focus-visible:ring-2 focus-visible:ring-navy/20" />
     </div>
   )
 }
