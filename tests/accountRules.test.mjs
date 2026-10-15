@@ -20,6 +20,7 @@ test('role options are the four self-service roles, representative scoped to the
   const opts = roleOptions(member)
   assert.deepEqual(opts.map((o) => o.value), ['Student', 'ASP', 'Faculty', 'COMEX Representative'])
   assert.equal(opts[3].label, 'COMEX Representative (SET)')
+  assert.equal(roleOptions({ ...member, department: 'CLINIC' })[3].label, 'COMEX Representative (Clinic)')
   assert.equal(roleOptions({ ...member, role: 'Volunteer' })[0].value, 'Volunteer')
 })
 

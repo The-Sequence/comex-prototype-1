@@ -4,6 +4,7 @@ import * as db from '../lib/db'
 import { useDialog } from '../lib/useDialog'
 import { changesFrom, editableFields, roleOptions, validateManage } from '../lib/accountRules'
 import { errorText } from '../lib/decisions'
+import { unitShort } from '../config/departments'
 import { FieldError } from './Form'
 
 const inputClass = (error) =>
@@ -135,7 +136,7 @@ export default function ManageAccountDialog({ actor, user, onSaved, onClose }) {
           </div>
           {fields.role && (
             <p className="text-[11px] text-gray-500">
-              A COMEX Representative covers the user's own department ({user.department}). An inactive account cannot sign in; set it
+              A COMEX Representative covers the user's own department or office ({unitShort(user.department)}). An inactive account cannot sign in; set it
               back to Active to restore access.
             </p>
           )}

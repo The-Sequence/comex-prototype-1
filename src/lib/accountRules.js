@@ -1,6 +1,7 @@
 /* Who may change what on an account. Mirrors the checks in the database
  * function and the admin-change-email function, so the dialog never offers
  * something the server will refuse. */
+import { unitShort } from '../config/departments.js'
 import { validateEmail, validateFullName } from './validation.js'
 
 export const PRIVILEGED_ROLES = ['COMEX Head', 'COMEX Associate', 'Approver']
@@ -23,7 +24,7 @@ export function roleOptions(target) {
   const list = ASSIGNABLE_ROLES.includes(current) ? ASSIGNABLE_ROLES : [current, ...ASSIGNABLE_ROLES]
   return list.map((role) => ({
     value: role,
-    label: role === 'COMEX Representative' && target?.department ? `COMEX Representative (${target.department})` : role,
+    label: role === 'COMEX Representative' && target?.department ? `COMEX Representative (${unitShort(target.department)})` : role,
   }))
 }
 

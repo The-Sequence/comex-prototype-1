@@ -25,3 +25,6 @@ export const ALL_UNITS = [...DEPARTMENTS, ...OFFICES]
 
 /** Display name for any department or office code. */
 export const unitName = (code) => ALL_UNITS.find((d) => d.code === code)?.name ?? code
+
+/** Short form: school code (SET) or office name (Clinic). */
+export const unitShort = (code) => OFFICES.find((o) => o.code === code)?.name ?? code
