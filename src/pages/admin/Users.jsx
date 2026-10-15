@@ -1,4 +1,8 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
+import { Pencil } from 'lucide-react'
+import { useAuth } from '../../context/AuthContext'
+import ManageAccountDialog from '../../components/ManageAccountDialog'
+import { canManageAccounts } from '../../lib/accountRules'
 import ListState from '../../components/ListState'
 import { Clock, UserRound, UserRoundCheck } from 'lucide-react'
 import { ADMIN_ROLES } from '../../lib/db'
@@ -21,7 +25,11 @@ function StatCard({ icon: Icon, value, label }) {
 
 /** Frame 7 — Admin: Users. */
 export default function Users() {
+  const { user: actor } = useAuth()
   const { rows: users, status, error, reload } = useUsers()
+  const [managing, setManaging] = useState(null)
+  const [toast, setToast] = useState('')
+  const canManage = canManageAccounts(actor)
   // In the URL (?department=SET) so a reload or Back keeps the filter.
   const [department, setDepartment] = useUrlParam('department', '', DEPARTMENT_CODES)
 
@@ -30,7 +38,7 @@ export default function Users() {
     return {
       members,
       verified: members
-        .filter((u) => u.status === 'approved')
+        .filter((u) => u.status === 'approved' || u.status === 'inactive')
         .sort((a, b) => (b.decidedAt ?? '').localeCompare(a.decidedAt ?? '')),
       pending: members.filter(isAwaitingApproval),
     }
@@ -44,7 +52,7 @@ export default function Users() {
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <StatCard icon={UserRound} value={members.length} label="Total Accounts" />
         <StatCard icon={Clock} value={pending.length} label="Pending Accounts" />
-        <StatCard icon={UserRoundCheck} value={verified.length} label="Verified Accounts" />
+        <StatCard icon={UserRoundCheck} value={verified.filter((u) => u.status === 'approved').length} label="Verified Accounts" />
       </div>
 
       <div className="mt-8 flex flex-wrap items-end justify-between gap-2">
@@ -75,7 +83,9 @@ export default function Users() {
               <th className="py-2 font-medium">Department</th>
               <th className="py-2 font-medium">Email</th>
               <th className="py-2 font-medium">Role</th>
+              <th className="py-2 font-medium">Status</th>
               <th className="py-2 font-medium">Date Approved</th>
+              {canManage && <th className="py-2 font-medium"><span className="sr-only">Manage</span></th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -85,12 +95,24 @@ export default function Users() {
                 <td className="py-2.5">{u.department}</td>
                 <td className="py-2.5">{u.email}</td>
                 <td className="py-2.5">{u.role}</td>
+                <td className="py-2.5">
+                  <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${u.status === 'inactive' ? 'bg-gray-200 text-gray-700' : 'bg-green-50 text-green-700'}`}>
+                    {u.status === 'inactive' ? 'Inactive' : 'Active'}
+                  </span>
+                </td>
                 <td className="py-2.5">{formatDate(u.decidedAt)}</td>
+                {canManage && (
+                  <td className="py-2.5 text-right">
+                    <button onClick={() => setManaging(u)} className="rounded p-1 text-navy hover:bg-canvas" aria-label={`Manage ${u.fullName}`} title="Manage account">
+                      <Pencil className="size-4" />
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={5} className="py-8 text-center text-gray-500">
+                <td colSpan={canManage ? 7 : 6} className="py-8 text-center text-gray-500">
                   No verified accounts match your filters.
                 </td>
               </tr>
@@ -98,6 +120,25 @@ export default function Users() {
           </tbody>
         </table>
       </div>
+      )}
+      {toast && (
+        <p className="mt-3 rounded border border-green-200 bg-green-50 px-3 py-2 text-xs text-green-800" role="status">
+          {toast}
+        </p>
+      )}
+      {managing && (
+        <ManageAccountDialog
+          actor={actor}
+          user={managing}
+          onSaved={(message) => {
+            reload()
+            if (message) {
+              setToast(message)
+              setManaging(null)
+            }
+          }}
+          onClose={() => setManaging(null)}
+        />
       )}
     </div>
   )

@@ -74,8 +74,12 @@ export async function signIn(email, password) {
     const user = await ownProfile(data.user.id)
     if (!user.emailVerified || user.status !== 'approved') {
       await signOut()
-      const code = !user.emailVerified ? 'unverified' : user.status === 'rejected' ? 'rejected' : 'pending'
-      return { code, error: code === 'rejected' ? 'Your account was rejected. Please contact the COMEX office.' : 'Your account is awaiting COMEX approval.' }
+      const code = !user.emailVerified ? 'unverified' : ['rejected', 'inactive'].includes(user.status) ? user.status : 'pending'
+      const messages = {
+        rejected: 'Your account was rejected. Please contact the COMEX office.',
+        inactive: 'Your account is inactive. Please contact the COMEX office.',
+      }
+      return { code, error: messages[code] ?? 'Your account is awaiting COMEX approval.' }
     }
     return { user }
   } catch (error) { await signOut(); throw error }
@@ -154,4 +158,21 @@ export async function decideRegistration(userId, decision, reason) {
   const decisionId = data
   const { emailStatus } = await retryDecisionEmail(decisionId)
   return { decisionId, emailStatus }
+}
+
+/** Head only: change a decided account's name, role and/or active state. Fields left undefined are unchanged. */
+export async function updateAccount(userId, { fullName, role, active }) {
+  const { error } = await requireBackend().rpc('admin_update_account', {
+    p_user: userId, p_full_name: fullName ?? null, p_role: role ?? null, p_active: active ?? null })
+  if (error) throw new Error(error.message)
+}
+/** Head only: change another account's sign-in email. */
+export async function changeAccountEmail(userId, email) {
+  const { data, error } = await requireBackend().functions.invoke('admin-change-email', { body: { userId, email } })
+  if (error) {
+    let message = 'The email could not be changed. Please try again.'
+    try { message = (await error.context.json()).error || message } catch { /* keep the generic message */ }
+    throw new Error(message)
+  }
+  return { email: data.email }
 }

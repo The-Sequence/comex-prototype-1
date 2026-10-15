@@ -59,3 +59,7 @@ Privacy acknowledgement is versioned, uses the COMEX logo and links to Republic 
 - `node --env-file=.env.local scripts/verify-live-accounts.mjs` (project authentication and RLS checks)
 
 The live test script uses only publishable access, validates all four roles, checks anonymous restrictions, blocked direct edits, forbidden decisions/emails and wrong-password rejection. It signs out only its own sessions.
+
+## Account management (COMEX Head)
+
+Users → pencil icon opens Manage account: full name, email, role (Student, ASP, Faculty, COMEX Representative for the user's own department) and Active/Inactive. Inactive accounts cannot sign in; Active restores access. Rules: Head only; decided accounts only; own account is name-only; Head, Associate and Approver accounts are name-only. Name, role and status go through the audited `admin_update_account` function (`account_changes` table); email goes through the `admin-change-email` function (requires a password-authenticated Head; the new address is marked confirmed and recorded). Role changes take effect the next time the user opens COMEX; users are not emailed about them.
