@@ -27,9 +27,15 @@ export function AuthProvider({ children }) {
     }
     refresh()
     const unsubscribe = db.onAuthChange(refresh)
+    // Re-check now and then so an account set to inactive loses access without a reload.
+    const recheck = () => document.visibilityState === 'visible' && navigator.onLine && refresh()
+    const timer = setInterval(recheck, 60000)
+    document.addEventListener('visibilitychange', recheck)
     return () => {
       live = false
       unsubscribe?.()
+      clearInterval(timer)
+      document.removeEventListener('visibilitychange', recheck)
     }
   }, [])
 

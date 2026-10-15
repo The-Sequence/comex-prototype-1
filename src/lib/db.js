@@ -176,3 +176,10 @@ export async function changeAccountEmail(userId, email) {
   }
   return { email: data.email }
 }
+/** Head only: email the user about their role/status change. Returns 'sent' or 'failed'. */
+export async function notifyAccountChange(userId) {
+  try {
+    const { data, error } = await requireBackend().functions.invoke('send-account-change-email', { body: { userId } })
+    return !error && data?.emailStatus === 'sent' ? 'sent' : 'failed'
+  } catch { return 'failed' }
+}

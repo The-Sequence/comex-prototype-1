@@ -55,7 +55,12 @@ export default function ManageAccountDialog({ actor, user, onSaved, onClose }) {
       if (Object.keys(profile).length) await db.updateAccount(user.id, profile)
       saved = Object.keys(profile).length ? 'Name, role or status saved. ' : ''
       if (email) await db.changeAccountEmail(user.id, email)
-      onSaved(`${user.fullName}'s account was updated.`)
+      const notify = 'role' in profile || 'active' in profile
+      const mailed = notify ? await db.notifyAccountChange(user.id) : 'sent'
+      onSaved(
+        `${user.fullName}'s account was updated.` +
+          (mailed === 'sent' ? '' : ' The notice email could not be sent; the change itself is saved.'),
+      )
     } catch (err) {
       setFormError(`${saved}${errorText(err)}`)
       setBusy(false)
