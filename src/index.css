@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+/* NU Fairview COMEX palette (same values as comex-frontend-v2). */
+@theme {
+  --color-navy: #3f4891;
+  --color-navy-dark: #293591;
+  --color-navy-deep: #1c224f;
+  --color-sidebar: #2e3a87;
+  --color-gold: #ffdf00;
+  --color-gold-soft: #f3d98a;
+  --color-canvas: #f5f6fa;
+}
+
+body {
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: var(--color-canvas);
+  color: #111827;
+}
+
+/* Blurred campus collage (Figma "KAI" frame) behind the auth cards,
+ * Frames 1–6. The image itself is pre-blurred. */
+.auth-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-color: var(--color-navy-deep);
+  background-size: cover;
+  background-position: center;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-toast-in { animation: toast-in 180ms ease-out; }
