@@ -9,7 +9,7 @@ import { POSITIONS, VOLUNTEER_ROLES, applicationErrors } from '../lib/applicatio
 import { applyToOpportunity, setApplicantStatus } from '../lib/applications'
 import { FieldError, Label, OutlineButton, PrimaryButton, TextField } from './Form'
 
-function Modal({ title, subtitle, size = 'max-w-lg', onClose, footer, children, z = 'z-50' }) {
+export function Modal({ title, subtitle, size = 'max-w-lg', onClose, footer, children, z = 'z-50' }) {
   const dialog = useRef(null)
   useDialog(dialog, onClose)
   return (
@@ -39,7 +39,7 @@ function Modal({ title, subtitle, size = 'max-w-lg', onClose, footer, children, 
   )
 }
 
-function SelectField({ id, label, required, error, options, placeholder, helper, ...props }) {
+export function SelectField({ id, label, required, error, options, placeholder, helper, ...props }) {
   return (
     <div>
       <Label htmlFor={id} required={required}>{label}</Label>
