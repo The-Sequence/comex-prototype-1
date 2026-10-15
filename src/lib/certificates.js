@@ -4,6 +4,7 @@
  * See docs/supabase-migration.md for moving this to Supabase. */
 import { useEffect, useState } from 'react'
 import { listHourRecords } from './certificateHours.js'
+import { HOURS_EVENT } from './volunteerHours.js'
 import {
   CURRENT_ACADEMIC_YEAR,
   buildCertificateRows,
@@ -108,9 +109,11 @@ export function useCertificateData(load) {
     const sync = () => setValue(load())
     sync()
     window.addEventListener(EVENT, sync)
+    window.addEventListener(HOURS_EVENT, sync)
     window.addEventListener('storage', sync)
     return () => {
       window.removeEventListener(EVENT, sync)
+      window.removeEventListener(HOURS_EVENT, sync)
       window.removeEventListener('storage', sync)
     }
   }, [load])

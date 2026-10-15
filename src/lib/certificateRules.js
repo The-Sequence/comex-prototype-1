@@ -51,7 +51,7 @@ const YEAR = (time) => new Date(time).getUTCFullYear()
 
 /** "January – May 2026" from the earliest and latest service dates. */
 export function derivePeriodLabel(records) {
-  const times = records.map((r) => new Date(r.date).getTime()).filter((t) => !Number.isNaN(t))
+  const times = records.map((r) => new Date(r.isoDate ?? r.date).getTime()).filter((t) => !Number.isNaN(t))
   if (!times.length) return ''
   const first = Math.min(...times)
   const last = Math.max(...times)

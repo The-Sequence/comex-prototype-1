@@ -122,7 +122,7 @@ export function attachStepFile(projectId, stepId, formCode, attachment, user) {
     if (!required.includes(formCode)) return { success: false, error: 'This form is not required at this step.' }
     const state = p.steps[stepId]
     if (state.status === STEP_STATUS.APPROVED) return { success: false, error: 'Approved steps cannot be replaced.' }
-    const file = { formCode, fileName: attachment.fileName.trim(), fileSize: attachment.fileSize ?? null, link: attachment.link ?? null, uploadedAt: now() }
+    const file = { formCode, fileName: attachment.fileName.trim(), fileSize: attachment.fileSize ?? null, link: attachment.link ?? null, formAttachmentId: attachment.formAttachmentId ?? null, uploadedAt: now() }
     const files = [...(state.files ?? []).filter((f) => f.formCode !== formCode), file]
     const complete = required.every((code) => files.some((f) => f.formCode === code))
     setStep(p, stepId, { files, status: complete ? STEP_STATUS.NEEDS_VALIDATION : STEP_STATUS.FILE_ATTACHED,

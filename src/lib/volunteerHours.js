@@ -2,11 +2,12 @@
  * Mirrors V2's volunteer_hours and department_requirements tables; see
  * supabase/migrations/202610150110_volunteer_hours.sql and docs/supabase-migration.md. */
 import { useEffect, useState } from 'react'
-import { buildHourRecord, CURRENT_ACADEMIC_YEAR, hoursProgress, normaliseRequirements, requiredHoursFor } from './hoursRules'
+import { buildHourRecord, CURRENT_ACADEMIC_YEAR, hoursProgress, normaliseRequirements, requiredHoursFor } from './hoursRules.js'
 
 const RECORDS_KEY = 'comex-volunteer-hours'
 const REQUIREMENTS_KEY = 'comex-required-hours'
-const EVENT = 'comex-volunteer-hours-change'
+export const HOURS_EVENT = 'comex-volunteer-hours-change'
+const EVENT = HOURS_EVENT
 
 function read(key, fallback) {
   try {
@@ -22,7 +23,7 @@ function write(key, value) {
   window.dispatchEvent(new Event(EVENT))
 }
 
-const readRecords = () => {
+export const readRecords = () => {
   const list = read(RECORDS_KEY, [])
   return Array.isArray(list) ? list : []
 }

@@ -16,6 +16,7 @@ import {
   updateProjectDetails, withdrawProject,
 } from '../lib/projects'
 import { Modal, SelectField } from './Applications'
+import { attachFilledForm, getDraft, useFormStore } from '../lib/formStore'
 import { FieldError, Label, OutlineButton, PrimaryButton, TextField } from './Form'
 
 /* ---------- Page controls (working versions of the display-only ones) ---------- */
@@ -309,6 +310,17 @@ function AttachmentSlot({ project, step, code, file, canAttach, user, onToast })
   const [useLink, setUseLink] = useState(false)
   const [link, setLink] = useState('')
   const inputId = `slot-${step.id}-${code}`
+  useFormStore()
+  const draft = canAttach ? getDraft(code, 'en') : null
+
+  // A form filled on the COMEX Forms page: snapshot it, then record it as this slot's file.
+  const attachDraft = () => {
+    const snapshot = attachFilledForm({ projectId: project.id, stepId: step.id, formCode: code, fields: draft.fields, userId: user.id })
+    if (!snapshot.success) return onToast(snapshot.error, 'error')
+    const result = attachStepFile(project.id, step.id, code, { fileName: `${COMEX_FORMS[code] ?? code} (filled on COMEX Forms)`, formAttachmentId: snapshot.data.id }, user)
+    if (!result.success) return onToast(result.error, 'error')
+    onToast(result.complete ? `Step ${step.id} was submitted for validation.` : 'Form attached. Add the remaining forms to submit this step.')
+  }
 
   const save = (source) => {
     const attachment = toAttachment(source)
@@ -348,6 +360,11 @@ function AttachmentSlot({ project, step, code, file, canAttach, user, onToast })
           <button type="button" onClick={() => setUseLink(!useLink)} className="inline-flex cursor-pointer items-center gap-1 text-xs text-navy underline">
             <Link2 className="size-3.5" /> {useLink ? 'Attach a file instead' : 'Paste a link instead'}
           </button>
+          {draft?.fields?.length > 0 && (
+            <button type="button" onClick={attachDraft} className="inline-flex cursor-pointer items-center gap-1 text-xs text-navy underline">
+              <Paperclip className="size-3.5" /> Use my filled form
+            </button>
+          )}
         </div>
       )}
     </li>
