@@ -1,21 +1,19 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { unitValue, validateStaff } from '../src/lib/staff.js'
+import { validateStaff } from '../src/lib/staff.js'
+import { ALL_UNITS, DEPARTMENTS, OFFICES, unitName } from '../src/config/departments.js'
 
-test('staff type and office are both required', () => {
-  assert.deepEqual(Object.keys(validateStaff({ staffType: '', unit: '', otherUnit: '' })).sort(), ['staffType', 'unit'])
-  assert.deepEqual(validateStaff({ staffType: 'ASP', unit: 'Clinic', otherUnit: '' }), {})
+test('staff type is required and must be a known type', () => {
+  assert.ok(validateStaff({ staffType: '' }).staffType)
+  assert.ok(validateStaff({ staffType: 'Boss' }).staffType)
+  assert.deepEqual(validateStaff({ staffType: 'ASP' }), {})
 })
 
-test('"Other" needs text, within the limit', () => {
-  assert.ok(validateStaff({ staffType: 'ASP', unit: 'Other', otherUnit: '  ' }).otherUnit)
-  assert.ok(validateStaff({ staffType: 'ASP', unit: 'Other', otherUnit: 'x'.repeat(101) }).otherUnit)
-  assert.deepEqual(validateStaff({ staffType: 'ASP', unit: 'Other', otherUnit: 'Print shop' }), {})
-})
-
-test('unknown choices are rejected; stored value follows the choice', () => {
-  assert.ok(validateStaff({ staffType: 'Boss', unit: 'Clinic', otherUnit: '' }).staffType)
-  assert.ok(validateStaff({ staffType: 'ASP', unit: 'Registrar', otherUnit: '' }).unit)
-  assert.equal(unitValue({ unit: 'Library', otherUnit: 'ignored' }), 'Library')
-  assert.equal(unitValue({ unit: 'Other', otherUnit: ' Print shop ' }), 'Print shop')
+test('offices are separate from schools but selectable at signup', () => {
+  assert.deepEqual(OFFICES.map((o) => o.code), ['CLINIC', 'LIBRARY'])
+  assert.equal(DEPARTMENTS.length, 6)
+  assert.equal(ALL_UNITS.length, 8)
+  assert.equal(unitName('LIBRARY'), 'Library')
+  assert.equal(unitName('SET'), 'School of Engineering and Technology')
+  assert.equal(unitName('???'), '???')
 })

@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { X } from 'lucide-react'
-import { DEPARTMENTS } from '../lib/db'
+import { unitName } from '../config/departments'
 import { formatDate } from '../lib/useUsers'
 import { useDialog } from '../lib/useDialog'
 
@@ -9,12 +9,12 @@ export default function RegistrationDetails({ user, onApprove, onReject, onClose
   const dialog = useRef(null)
   useDialog(dialog, onClose)
 
-  const department = DEPARTMENTS.find((d) => d.code === user.department)?.name ?? user.department
+  const department = unitName(user.department)
   const rows = [
     ['Name:', user.fullName],
-    ['Department:', department],
+    ['Department/Office:', department],
     ['Email Address:', user.email],
-    ...(user.unit ? [['Staff type:', user.staffType], ['Office/unit:', user.unit]] : []),
+    ...(user.staffType ? [['Staff type:', user.staffType]] : []),
   ]
 
   return (

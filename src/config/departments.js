@@ -12,3 +12,16 @@ export const DEPARTMENTS = [
 
 /** "SET — School of Engineering and Technology", as the real signup shows it. */
 export const departmentLabel = (d) => `${d.code} — ${d.name}`
+
+/* Non-academic offices that have their own staff. Kept apart from the schools:
+ * they are not in comex-frontend-v2's school list. Add an office only when the COMEX office says so. */
+export const OFFICES = [
+  { code: 'CLINIC', name: 'Clinic' },
+  { code: 'LIBRARY', name: 'Library' },
+]
+
+/** Every choice a person can register under: schools, then offices. */
+export const ALL_UNITS = [...DEPARTMENTS, ...OFFICES]
+
+/** Display name for any department or office code. */
+export const unitName = (code) => ALL_UNITS.find((d) => d.code === code)?.name ?? code

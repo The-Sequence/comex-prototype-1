@@ -1,7 +1,7 @@
 /* Pre-login privacy acknowledgement. Bump the version whenever the notice
  * text changes so people are asked again. This is only a reminder shown
  * before the account screens; it is not a consent record. */
-export const PRIVACY_NOTICE_VERSION = '2026-10-sprint1-r4'
+export const PRIVACY_NOTICE_VERSION = '2026-10-sprint1-r5'
 export const PRIVACY_KEY = 'comex-privacy-ack'
 export const DATA_PRIVACY_ACT_URL = 'https://privacy.gov.ph/data-privacy-act/'
 
@@ -23,7 +23,7 @@ export function acknowledge(storage) {
 
 /** What the Sprint 1 account screens actually collect and why. */
 export const ACCOUNT_DATA = [
-  ['Full name, department and requested role (and, for staff, staff type and the office or unit you work in)', 'to identify you and let the COMEX Head decide whether to approve you.'],
+  ['Full name, department or office and requested role (and, for staff, staff type)', 'to identify you and let the COMEX Head decide whether to approve you.'],
   ['Email address', 'to send your verification code, password-reset code and the approval or rejection notice.'],
   ['Password', 'to sign you in. It is handled by the sign-in service and is never shown to COMEX staff.'],
   ['Account status and decision record', 'pending, approved or rejected, with who decided, when, and the reason if one was given.'],

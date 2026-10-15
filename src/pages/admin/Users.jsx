@@ -6,12 +6,12 @@ import { canManageAccounts } from '../../lib/accountRules'
 import ListState from '../../components/ListState'
 import { Clock, UserRound, UserRoundCheck } from 'lucide-react'
 import { ADMIN_ROLES } from '../../lib/db'
-import { DEPARTMENTS } from '../../config/departments'
+import { ALL_UNITS, DEPARTMENTS, OFFICES } from '../../config/departments'
 import { formatDate, isAwaitingApproval, useUsers } from '../../lib/useUsers'
 import { useUrlParam } from '../../lib/useUrlParam'
 import { DisplaySearch } from '../../components/DashboardControls'
 
-const DEPARTMENT_CODES = DEPARTMENTS.map((d) => d.code)
+const DEPARTMENT_CODES = ALL_UNITS.map((d) => d.code)
 
 function StatCard({ icon: Icon, value, label }) {
   return (
@@ -65,11 +65,20 @@ export default function Users() {
           aria-label="Filter by department"
         >
           <option value="">Select Department</option>
-          {DEPARTMENTS.map((d) => (
-            <option key={d.code} value={d.code}>
-              {d.code}
-            </option>
-          ))}
+          <optgroup label="Departments">
+            {DEPARTMENTS.map((d) => (
+              <option key={d.code} value={d.code}>
+                {d.code}
+              </option>
+            ))}
+          </optgroup>
+          <optgroup label="Offices">
+            {OFFICES.map((d) => (
+              <option key={d.code} value={d.code}>
+                {d.name}
+              </option>
+            ))}
+          </optgroup>
         </select>
       </div>
 
@@ -80,7 +89,7 @@ export default function Users() {
           <thead className="border-b border-gray-300 text-gray-600">
             <tr>
               <th className="py-2 font-medium">Full name</th>
-              <th className="py-2 font-medium">Department</th>
+              <th className="py-2 font-medium">Department/Office</th>
               <th className="py-2 font-medium">Email</th>
               <th className="py-2 font-medium">Role</th>
               <th className="py-2 font-medium">Status</th>

@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import { Check, X } from 'lucide-react'
 import AuthCard from '../components/AuthCard'
 import { Alert, FieldError, Label, OutlineButton, PasswordField, PrimaryButton, TextField } from '../components/Form'
-import { DEPARTMENTS, departmentLabel } from '../config/departments'
+import { DEPARTMENTS, OFFICES, departmentLabel } from '../config/departments'
 import * as db from '../lib/db'
 import { CODE_TTL_MINUTES, SIGNUP_ROLES } from '../lib/db'
 import { PRIVACY_NOTICE_VERSION } from '../lib/privacy'
-import { OTHER_UNIT, STAFF_TYPES, STAFF_UNITS } from '../config/staff'
-import { unitValue, validateStaff } from '../lib/staff'
+import { STAFF_TYPES } from '../config/staff'
+import { validateStaff } from '../lib/staff'
 import { codeScreenUrl } from '../lib/urlParams'
 import BackendNotice from '../components/BackendNotice'
 import { errorText } from '../lib/decisions'
@@ -20,7 +20,7 @@ import {
   validatePassword,
 } from '../lib/validation'
 
-const EMPTY = { fullName: '', department: '', email: '', password: '', confirm: '', role: '', staffType: '', unit: '', otherUnit: '' }
+const EMPTY = { fullName: '', department: '', email: '', password: '', confirm: '', role: '', staffType: '' }
 
 const selectClass = (error, value) =>
   `w-full rounded-sm border bg-white px-2 py-2 text-sm outline-none focus:ring-2 ${
@@ -71,7 +71,7 @@ export default function SignUp() {
         email: form.email,
         password: form.password,
         role: form.role === 'Others' ? 'ASP' : form.role,
-        ...(form.role === 'Others' ? { staffType: form.staffType, unit: unitValue(form) } : {}),
+        ...(form.role === 'Others' ? { staffType: form.staffType } : {}),
       })
       navigate(codeScreenUrl('/verify-email', sent.email), {
         state: { email: sent.email, expiresAt: sent.expiresAt ?? Date.now() + CODE_TTL_MINUTES * 60 * 1000 },
@@ -115,11 +115,20 @@ export default function SignUp() {
               } ${form.department ? '' : 'text-gray-400'}`}
             >
               <option value="">Choose your department/office</option>
-              {DEPARTMENTS.map((d) => (
-                <option key={d.code} value={d.code} className="text-gray-900">
-                  {departmentLabel(d)}
-                </option>
-              ))}
+              <optgroup label="Departments">
+                {DEPARTMENTS.map((d) => (
+                  <option key={d.code} value={d.code} className="text-gray-900">
+                    {departmentLabel(d)}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="Offices">
+                {OFFICES.map((d) => (
+                  <option key={d.code} value={d.code} className="text-gray-900">
+                    {d.name}
+                  </option>
+                ))}
+              </optgroup>
             </select>
             <FieldError>{errors.department}</FieldError>
           </div>
@@ -205,23 +214,6 @@ export default function SignUp() {
                 </select>
                 <FieldError>{errors.staffType}</FieldError>
               </div>
-              <div>
-                <Label htmlFor="unit" required>
-                  Where do you work?
-                </Label>
-                <select id="unit" value={form.unit} onChange={update('unit')} aria-invalid={!!errors.unit} className={selectClass(errors.unit, form.unit)}>
-                  <option value="">Choose your office or unit</option>
-                  {[...STAFF_UNITS, OTHER_UNIT].map((u) => (
-                    <option key={u} value={u} className="text-gray-900">
-                      {u}
-                    </option>
-                  ))}
-                </select>
-                <FieldError>{errors.unit}</FieldError>
-              </div>
-              {form.unit === OTHER_UNIT && (
-                <TextField id="otherUnit" label="Specify your office or unit" required value={form.otherUnit} onChange={update('otherUnit')} error={errors.otherUnit} />
-              )}
             </div>
           )}
           <FieldError>{errors.role}</FieldError>
