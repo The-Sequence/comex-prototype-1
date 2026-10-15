@@ -19,11 +19,11 @@ export function PageTitle({ children, action }) {
   )
 }
 
-export function YellowButton({ children, className = '' }) {
+export function YellowButton({ children, className = '', onClick, disabled = false }) {
   return (
     <button
-      {...INERT}
-      className={`min-h-11 cursor-pointer rounded-full border border-gray-700 bg-gold px-6 py-2 font-bold text-black shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy ${className}`}
+      {...(onClick || disabled ? { type: 'button', onClick, disabled } : INERT)}
+      className={`min-h-11 cursor-pointer disabled:cursor-default disabled:opacity-60 rounded-full border border-gray-700 bg-gold px-6 py-2 font-bold text-black shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy ${className}`}
     >
       {children}
     </button>
@@ -103,8 +103,10 @@ export function StatusPill({ tone, children }) {
   return <span className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-sm font-semibold ${tones[tone]}`}>{children}</span>
 }
 
+export const ECOWAYS_ID = 'ecoways-clean-green'
+
 /** Volunteer opportunity post — Frames 9 and 14. */
-export function OpportunityPost({ actionLabel, office = false, audience = 'Everyone' }) {
+export function OpportunityPost({ action, office = false, audience = 'Everyone', children }) {
   return (
     <article className="max-w-4xl">
       <div className="flex flex-wrap items-center gap-3">
@@ -124,7 +126,7 @@ export function OpportunityPost({ actionLabel, office = false, audience = 'Every
       <p className="mt-1 text-lg">Be part of EcoWays’ clean-up drive and help create a cleaner, greener community.</p>
       <img src={poster} alt="Nationalian EcoWays flexible plastic waste collection poster" className="mt-3 w-full max-w-3xl" />
       <div className="mt-4 flex flex-wrap items-center gap-6">
-        <YellowButton className="min-w-56 text-lg">{actionLabel}</YellowButton>
+        {action}
         <DisplayButton label="Like opportunity" className="!flex-col !gap-0 !border-0 !shadow-none">
           <Heart className="size-7" /> 21
         </DisplayButton>
@@ -132,6 +134,7 @@ export function OpportunityPost({ actionLabel, office = false, audience = 'Every
           <Share2 className="size-6" /> 3
         </DisplayButton>
       </div>
+      {children}
     </article>
   )
 }
