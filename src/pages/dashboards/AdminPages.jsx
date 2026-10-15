@@ -1,12 +1,12 @@
 /* COMEX Head display pages — Figma Frames 9, 10, 11, 11.12 and 12.
  * Display only: nothing on these pages can be changed. */
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Calendar, Clock, Filter, Send, CircleCheck, Eye, PenLine } from 'lucide-react'
 import { AttentionPanel, DisplayButton, DisplayFilter, DisplaySearch } from '../../components/DashboardControls'
 import {
   Avatar,
   DepartmentPanel,
-  ECOWAYS_ID,
+  ECOWAYS,
   FakeSelect,
   MessagesPanel,
   NavyButton,
@@ -16,44 +16,39 @@ import {
   Tabs,
   YellowButton,
 } from '../../components/Showcase'
-import { useApplications } from '../../lib/applications'
+import { useApplications, usePendingApplicationCount } from '../../lib/applications'
+import { ApplicantsDialog, Toast } from '../../components/Applications'
 
 /** Frame 9 — Admin Home. */
 export function AdminHome() {
-  const applicants = useApplications(ECOWAYS_ID)
+  const applicants = useApplications(ECOWAYS.id)
+  const pendingCount = usePendingApplicationCount()
   const [showApplicants, setShowApplicants] = useState(false)
+  const [toast, setToast] = useState(null)
+  const showToast = useCallback((message, tone = 'success') => setToast({ message, tone }), [])
   return (
     <>
       <PageTitle action={<YellowButton>+ New opportunity</YellowButton>}>Volunteer Opportunities</PageTitle>
       <DisplaySearch placeholder="Search volunteer opportunity titles and captions" className="mb-6 max-w-4xl" />
       <OpportunityPost office action={
-        <YellowButton className="min-w-56 text-lg" onClick={() => setShowApplicants(v => !v)}>
+        <YellowButton className="min-w-56 text-lg" onClick={() => setShowApplicants(true)}>
           List of applicants ({applicants.length})
         </YellowButton>
-      }>
-        {showApplicants && (
-          <section aria-label="Applicants" className="mt-4 rounded border border-gray-300">
-            {applicants.length === 0
-              ? <p className="px-5 py-4 text-gray-600">No applicants yet.</p>
-              : <ul className="divide-y">
-                {applicants.map(a => (
-                  <li key={a.userId} className="flex flex-wrap items-center gap-3 px-5 py-3">
-                    <Avatar name={a.fullName} />
-                    <div className="leading-snug">
-                      <p className="font-medium">{a.fullName}</p>
-                      <p className="text-sm text-gray-600">{a.role} · {a.department} · {a.email}</p>
-                    </div>
-                    <p className="ml-auto text-sm text-gray-500">Applied {new Date(a.appliedAt).toLocaleDateString()}</p>
-                  </li>
-                ))}
-              </ul>}
-          </section>
-        )}
-      </OpportunityPost>
+      } />
       <AttentionPanel items={[
-        { title: '4 registrations waiting for approval', detail: 'Review the requested role and department.', action: 'Review' },
-        { title: 'Community Engagement forms submitted', detail: 'A representative submitted the required forms.', action: 'View' },
+        ...(pendingCount > 0 ? [{
+          title: `${pendingCount} volunteer ${pendingCount === 1 ? 'application' : 'applications'} awaiting a decision`,
+          detail: 'Accept or decline so volunteers know where they stand.',
+          action: 'Review',
+          onAction: () => setShowApplicants(true),
+        }] : []),
+        { title: '4 registrations waiting for approval', detail: 'Review the requested role and department.', action: 'Review', to: 'approvals' },
+        { title: 'Community Engagement forms submitted', detail: 'A representative submitted the required forms.', action: 'View', to: 'projects' },
       ]} />
+      {showApplicants && (
+        <ApplicantsDialog opportunity={ECOWAYS} applicants={applicants} onClose={() => setShowApplicants(false)} onToast={showToast} />
+      )}
+      <Toast message={toast?.message} tone={toast?.tone} onDismiss={() => setToast(null)} />
     </>
   )
 }

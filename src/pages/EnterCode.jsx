@@ -10,6 +10,8 @@ import { validateCode } from '../lib/validation'
 import { emailFromSearch } from '../lib/urlParams'
 
 export const RESET_GRANT_KEY = 'comex-reset-grant'
+// Supabase sends at most one auth email a minute per address; resending sooner only hits the rate limit.
+const RESEND_COOLDOWN_MS = 60 * 1000
 
 const formatRemaining = (ms) => {
   const total = Math.max(0, Math.ceil(ms / 1000))
@@ -30,7 +32,8 @@ export default function EnterCode({ purpose }) {
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [busy, setBusy] = useState(false)
-  const [cooldownUntil, setCooldownUntil] = useState(0)
+  // A code was just sent when we arrive from the previous screen, so the countdown starts right away.
+  const [cooldownUntil, setCooldownUntil] = useState(() => (state?.expiresAt ? Date.now() + RESEND_COOLDOWN_MS : 0))
   const [expiresAt, setExpiresAt] = useState(state?.expiresAt ?? null)
   const [now, setNow] = useState(() => Date.now())
 
@@ -42,6 +45,7 @@ export default function EnterCode({ purpose }) {
   if (!email) return <Navigate to="/login" replace />
 
   const expired = expiresAt !== null && now > expiresAt
+  const cooldownLeft = Math.max(0, Math.ceil((cooldownUntil - now) / 1000))
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -71,7 +75,7 @@ export default function EnterCode({ purpose }) {
 
   const resend = async () => {
     if (Date.now() < cooldownUntil) return setError('Please wait a moment before requesting another code.')
-    setCooldownUntil(Date.now() + 30000)
+    setCooldownUntil(Date.now() + RESEND_COOLDOWN_MS)
     setNotice('')
     try {
       const sent = purpose === 'verify' ? await db.resendSignupCode(email) : await db.requestPasswordReset(email)
@@ -114,8 +118,9 @@ export default function EnterCode({ purpose }) {
           ) : (
             <>Code expires in {formatRemaining(expiresAt - now)}.</>
           )}{' '}
-          <button type="button" onClick={resend} className="font-semibold text-navy underline">
-            Resend code
+          <button type="button" onClick={resend} disabled={cooldownLeft > 0}
+            className="font-semibold text-navy underline disabled:cursor-not-allowed disabled:text-gray-500 disabled:no-underline">
+            {cooldownLeft > 0 ? `Resend code in ${cooldownLeft}s` : 'Resend code'}
           </button>
         </p>
         <div className="mt-6 text-center">

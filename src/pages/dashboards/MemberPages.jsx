@@ -1,12 +1,13 @@
 /* Volunteer, COMEX Representative and Approver display pages —
  * Figma Frames 14–17, plus an endorsement queue for the Approver actor
  * built from the Frame 10 layout. Display only: nothing here can be changed. */
+import { useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import { CircleCheck, CircleAlert, Clock, Download, Eye, Filter } from 'lucide-react'
+import { CircleAlert, Clock, Download, Eye, Filter } from 'lucide-react'
 import { AttentionPanel, DisplayButton, DisplayFilter, DisplaySearch } from '../../components/DashboardControls'
 import {
   DepartmentPanel,
-  ECOWAYS_ID,
+  ECOWAYS,
   FakeSelect,
   MessagesPanel,
   OpportunityPost,
@@ -14,23 +15,40 @@ import {
   Tabs,
   YellowButton,
 } from '../../components/Showcase'
-import { applyToOpportunity, useApplications } from '../../lib/applications'
+import { useApplications } from '../../lib/applications'
+import { ApplicationForm, Toast } from '../../components/Applications'
 
 /** Frame 14 — Volunteer Opportunities feed. */
 export function MemberHome() {
   const { user } = useOutletContext()
-  const applied = useApplications(ECOWAYS_ID).some(a => a.userId === user.id)
+  const applied = useApplications(ECOWAYS.id).find(a => a.userId === user.id)
+  const [applying, setApplying] = useState(false)
+  const [toast, setToast] = useState('')
   return (
     <>
       <PageTitle>Volunteer Opportunities</PageTitle>
       <DisplaySearch placeholder="Search volunteer opportunity titles and captions" className="mb-6 max-w-4xl" />
-      <OpportunityPost action={applied
-        ? <YellowButton className="min-w-56 text-lg" disabled><CircleCheck className="mr-2 inline size-5" />Applied</YellowButton>
-        : <YellowButton className="min-w-56 text-lg" onClick={() => applyToOpportunity(ECOWAYS_ID, user)}>Apply</YellowButton>} />
+      <OpportunityPost action={
+        <YellowButton className="min-w-56 text-lg" disabled={Boolean(applied)} onClick={() => setApplying(true)}>
+          {applied ? `Applied — ${applied.status}` : 'Apply'}
+        </YellowButton>
+      } />
       <AttentionPanel items={[
-        { title: '30 volunteer hours still needed', detail: 'Apply to an activity to complete your requirement.', action: 'Track' },
-        { title: '2 unread messages', detail: 'You have a reply from the COMEX Office.', action: 'Read' },
+        { title: '30 volunteer hours still needed', detail: 'Apply to an activity to complete your requirement.', action: 'Track', to: 'volunteer-hours' },
+        { title: '2 unread messages', detail: 'You have a reply from the COMEX Office.', action: 'Read', to: 'messages' },
       ]} />
+      {applying && (
+        <ApplicationForm
+          opportunity={ECOWAYS}
+          user={user}
+          onClose={() => setApplying(false)}
+          onSubmitted={() => {
+            setApplying(false)
+            setToast('Your application was submitted. The COMEX Office will review it.')
+          }}
+        />
+      )}
+      <Toast message={toast} onDismiss={() => setToast('')} />
     </>
   )
 }

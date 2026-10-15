@@ -43,3 +43,12 @@ test('initials from either name order', () => {
   assert.equal(initials('Juan Dela Cruz'), 'JD')
   assert.equal(initials('Dela Cruz, Juan'), 'DC')
 })
+
+import { applicationErrors } from '../src/lib/applicationErrors.js'
+
+test('application form: one message per missing field, none when complete', () => {
+  assert.deepEqual(Object.keys(applicationErrors({})), ['fullName', 'position', 'department', 'volunteerRole'])
+  assert.deepEqual(applicationErrors({ fullName: 'Ana', position: 'Student', department: 'SET', volunteerRole: ' ' }),
+    { volunteerRole: 'Choose a volunteer role.' })
+  assert.deepEqual(applicationErrors({ fullName: 'Ana', position: 'Student', department: 'SET', volunteerRole: 'Facilitator' }), {})
+})

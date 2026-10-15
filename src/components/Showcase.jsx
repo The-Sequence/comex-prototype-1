@@ -104,6 +104,7 @@ export function StatusPill({ tone, children }) {
 }
 
 export const ECOWAYS_ID = 'ecoways-clean-green'
+export const ECOWAYS = { id: ECOWAYS_ID, title: 'Join EcoWays: Clean and Green Initiative' }
 
 /** Volunteer opportunity post — Frames 9 and 14. */
 export function OpportunityPost({ action, office = false, audience = 'Everyone', children }) {
@@ -122,7 +123,7 @@ export function OpportunityPost({ action, office = false, audience = 'Everyone',
           <DisplayButton icon={Trash2} className="text-red-600">Delete</DisplayButton>
         </div>}
       </div>
-      <h2 className="mt-5 text-2xl font-bold md:text-3xl">Join EcoWays: Clean and Green Initiative</h2>
+      <h2 className="mt-5 text-2xl font-bold md:text-3xl">{ECOWAYS.title}</h2>
       <p className="mt-1 text-lg">Be part of EcoWays’ clean-up drive and help create a cleaner, greener community.</p>
       <img src={poster} alt="Nationalian EcoWays flexible plastic waste collection poster" className="mt-3 w-full max-w-3xl" />
       <div className="mt-4 flex flex-wrap items-center gap-6">
