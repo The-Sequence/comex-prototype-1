@@ -8,7 +8,6 @@ import { AttentionPanel, DisplayButton, DisplayFilter, DisplaySearch } from '../
 import {
   DepartmentPanel,
   ECOWAYS,
-  MessagesPanel,
   OpportunityPost,
   PageTitle,
   Tabs,
@@ -22,6 +21,7 @@ import { ApplicationForm, Toast } from '../../components/Applications'
 export function MemberHome() {
   const { user } = useOutletContext()
   const applied = useApplications(ECOWAYS.id).find(a => a.userId === user.id)
+  const unread = useUnreadThreadCount(user)
   const [applying, setApplying] = useState(false)
   const hoursNeeded = useHoursStillNeeded(user)
   const [toast, setToast] = useState('')
@@ -101,16 +101,6 @@ export function MyProjects() {
           </tbody>
         </table>
       </div>
-    </>
-  )
-}
-
-/** Frame 17 — Messages. */
-export function MemberMessages() {
-  return (
-    <>
-      <PageTitle>Messages</PageTitle>
-      <MessagesPanel />
     </>
   )
 }

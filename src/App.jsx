@@ -23,14 +23,15 @@ const AdminHome = adminPage('AdminHome')
 const AdminProjects = adminPage('AdminProjects')
 const hoursPage = (name) => lazy(() => import('./pages/dashboards/HoursPages').then((m) => ({ default: m[name] })))
 const AdminVolunteerHours = hoursPage('AdminVolunteerHours')
-const AdminMessages = adminPage('AdminMessages')
 const AdminCertificates = certificatePage('AdminCertificates')
 const MyCertificates = certificatePage('MyCertificates')
 const MemberHome = memberPage('MemberHome')
 const MyProjects = memberPage('MyProjects')
 const MyVolunteerHours = hoursPage('MyVolunteerHours')
 const Endorsements = memberPage('Endorsements')
-const MemberMessages = memberPage('MemberMessages')
+const messagePage = (name) => lazy(() => import('./pages/dashboards/MessagePages').then((m) => ({ default: m[name] })))
+const AdminMessages = messagePage('AdminMessages')
+const MemberMessages = messagePage('MemberMessages')
 
 /* Browser-tab titles for the account screens. Dashboard pages take theirs
  * from the sidebar label (see AppLayout). */
